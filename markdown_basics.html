@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Header</title>
+        <style>
+</style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <p>BASED ON: <a href="https://www.youtube.com/watch?v=_PPWWRV6gbA&amp;t=60s">https://www.youtube.com/watch?v=_PPWWRV6gbA&amp;t=60s</a></p>
+<h1 id="header">Header</h1>
+<h2 id="header-2">Header 2</h2>
+<p><code>inline code</code></p>
+<pre><code class="language-sql"><span class="hljs-comment">--Dies ist ein Kommentar</span>
+<span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> customers
+</code></pre>
+<p>--two paragraphs
+Normal Text</p>
+<p>New Paragraph</p>
+<p>--two spaces and return: new line in same paragraph
+Text again<br>
+same Paragraph</p>
+<p>bold: <strong>bold</strong><br>
+italics: <em>italics</em><br>
+bold and italics: <em><strong>both</strong></em><br>
+strike throuch: <s>rubish</s><br>
+highlight: ==this is the shit== (does not work because of markdown flavour)<br>
+<mark>this is the shit</mark></p>
+<p>X<sup>2<sup>4</sup></sup> 2
+H<sub>2<sub>4</sub></sub> 4</p>
+<p>--one line code<br>
+This is <code>let c = 2*x</code></p>
+<pre><code class="language-js"><span class="hljs-comment">//comment</span>
+<span class="hljs-keyword">const</span> hi = <span class="hljs-string">&quot;test&quot;</span>;
+</code></pre>
+<pre><code class="language-py"><span class="hljs-comment">#comment</span>
+a = <span class="hljs-string">&quot;test&quot;</span>;
+</code></pre>
+<p><a href="/page">This is a link</a><br>
+<a href="https://google.com">Google</a><br>
+--no formatting<br>
+<a href="https://google.com">https://google.com</a><br>
+image<br>
+<img src="file:////home/anush/Downloads/dl.png" alt="Image"></p>
+<p>Quote</p>
+<blockquote>
+<p>i swear</p>
+<blockquote>
+<p>to the moon and the stars and the sun</p>
+<blockquote>
+<p>i'll be  there</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>division line (all three are valid)</p>
+<hr>
+<hr>
+<hr>
+<p>Ordered list (Ordering in beginning does not matter, i.e. 1. Item 1, 1. Item 2 still renders as 1. and 2. )</p>
+<ol>
+<li>Item 1</li>
+<li>Item 2</li>
+<li>Item 3</li>
+</ol>
+<p>Unordered list (works with &quot;*&quot;, &quot;-&quot;, &quot;+&quot;)<br>
+Tab key or 4 spaces indent bullet points</p>
+<ul>
+<li>Item 1
+<ul>
+<li>Bullet point with tab</li>
+</ul>
+</li>
+<li>Item 2
+<ul>
+<li>Bullet point with 4 spaces</li>
+</ul>
+</li>
+<li>Item 3</li>
+</ul>
+<p>Table</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Letter</th>
+<th style="text-align:center">Digit</th>
+<th style="text-align:center">Character</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">a</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">$</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"><b>365</b></td>
+<td style="text-align:center">(</td>
+</tr>
+<tr>
+<td style="text-align:center">b</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">^</td>
+</tr>
+</tbody>
+</table>
+<p>Table (dividor: :--- or --- = left align, ---: right align, :---: center align)</p>
+<table>
+<thead>
+<tr>
+<th>Letter</th>
+<th>Digit</th>
+<th style="text-align:right">Character</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td>4</td>
+<td style="text-align:right">$</td>
+</tr>
+<tr>
+<td></td>
+<td><b>365</b></td>
+<td style="text-align:right">(</td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td style="text-align:right">^</td>
+</tr>
+</tbody>
+</table>
+<p>This is a regular paragraph.</p>
+<table>
+    <tr>
+        <td>Foo</td>
+    </tr>
+</table>
+<p>This is another regular paragraph.</p>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> Checkbox unticked</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> Checkbox ticked</li>
+</ul>
+<p><input type="checkbox" checked> some checked text<br>
+<input type="checkbox"> some unchecked text</p>
+
+        <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+        
+    </body>
+    </html>
