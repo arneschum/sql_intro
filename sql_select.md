@@ -4,8 +4,8 @@
 
 + SQL erlaubt die Abfrage, das Editieren, Ändern und Löschen von Informationen in einer Datenbank
 + SQL ist standardisiert und funktioniert (fast) auf jedem Datenbanksystem gleich
-+ American National Standards Institute (ANSI) in 1986, und von der International Organization for Standardization (ISO) in 1987
-+ Standardisierung ermöglicht eine weite Verbreitung und Nutzung -> nicht jedes System hat seinen eigenen Standard, da Kompatibilität gewahrt bleibt
++ Der Standard wird festgelegt von der American National Standards Institute (ANSI) in 1986 und von der International Organization for Standardization (ISO) in 1987
+  + Standardisierung ermöglicht eine weite Verbreitung und Nutzung -> nicht jedes System hat seinen eigenen Standard, da Kompatibilität gewahrt bleibt
 + Allerdings hat jedes Datenbanksystem auch immer noch Abweichungen (flavours, dialects)  und eigene Implementationen  
 + SQL gehört zur 4. Generation (4GL) an Programmiersprachen und ist rein deklarativ:
   + Daten werden angefordert, man hat aber keinen Einfluss, wie diese Daten abgeholt werden
@@ -15,12 +15,12 @@
 
 Statement| Zugehörig
 ------- | -------
-SELECT | Data retrieval (Abfrage)
-CREATE<br>ALTER<br>DROP | Data definition language (DDL) 
-INSERT<br>UPDATE<br>DELETE<br>MERGE<br>TRUNCATE<br> | Data manipulation language (DML)    
-COMMIT<br>ROLLBACK<br>SAVEPOINT<br> | Transaction control
-GRANT<br>REVOKE<br> | Data control language (DCL)
-
+SELECT | **Data retrieval (Abfrage)**
+CREATE<br>ALTER<br>DROP | **Data definition language (DDL)**
+INSERT<br>UPDATE<br>DELETE<br>MERGE<br>TRUNCATE<br> | **Data manipulation language (DML)**    
+COMMIT<br>ROLLBACK<br>SAVEPOINT<br> | **Transaction control**
+GRANT<br>REVOKE<br> | **Data control language (DCL)**
+<br>
 + :heavy_check_mark: Dies sind bereits alle möglichen SQL-Statements
 + Data definition language (DDL) ermöglicht das Erstellen oder Ändern des Datenmodells
 + Data Manipulation Language (DML) bezieht sich auf die Daten selbst, also das Hinzufügen, Ändern oder Löschen von Daten
@@ -44,24 +44,20 @@ SELECT * FROM products;
 
 ```sql
 -- Wie selektiere ich Spalten?
-SELECT product_name, quantity_per_unit FROM products;
+SELECT product_name, quantity_per_unit FROM products; --product_name = Spalte
+
+SELECT * FROM products --alle Spalten
 ```
-+ :information_source: :arrow_down: Ein SELECT-Statement kann folgende Keywords enthalten:
-
-Keyword | Beschreibung
-:--- | -------:
-<span style="color:blue">**SELECT**</span> | Filtert Spalten ("*" für alle)
-<span style="color:blue">**FROM**</span> | Tabelle
-<span style="color:blue">**WHERE**</span> | Filtert Zeilen
-<span style="color:blue">**GROUP BY**</span> | Ermöglicht das Aggregieren auf Spalten, z. B. mit SUM(), MAX(), MIN(), COUNT(), AVG()
-<span style="color:blue">**HAVING**</span> | Filtert wieder Zeilen **nach** dem Aggregieren
-<span style="color:blue">**ORDER BY**</span> | Sortiert Ergebnis nach Spalte
-<span style="color:blue">**LIMIT**</span> | Limitiert die Ergebnisse auf eine bestimmte Anzahl, z. B. 100 | 
-
 ### Operatoren
 
 + Wie selektiere (filtere) ich Zeilen? :arrow_down::
 
++ mit dem WHERE statement:
+
+```sql
+SELECT * FROM products
+WHERE spalten_name = 'Wert'
+```
 #### Arithmetisch
 
 Operator | Bedeutung
@@ -98,9 +94,9 @@ NOT | Negation
 ##### Beispiele
 ```sql
 -- Alle Produkte, die mit "A" anfangen UND über 50 $ kosten
-SELECT ... WHERE product_name LIKE 'A%' and unit_price > 50
+SELECT * FROM products WHERE product_name LIKE 'A%' and unit_price > 50
 -- Alle Produkte, die **nicht** mit "B" anfangen 
-SELECT ... WHERE product_name NOT LIKE ('B%')  
+SELECT * FROM products WHERE product_name NOT LIKE ('B%')  
 ```
 
 ```sql
@@ -139,7 +135,7 @@ FROM products
 GROUP BY supplier_id
 ORDER BY avg
 ```
-+ :arrow_up: :exclamation: Jede Spalte, die im `SELECT ` Keyword auftaucht, muss auch im `GROUP BY` Keyword vorkommen
++ :arrow_up: :exclamation: Jede Spalte, die im `SELECT ` Keyword auftaucht (außer der Aggregationsfunktion selbst), muss auch im `GROUP BY` Keyword vorkommen
 
 ```sql
 -- Geht das bitte mit aufgelöstem Händlername?
@@ -150,8 +146,19 @@ FROM products
 GROUP BY supplier_id
 ORDER BY avg) ave_price ON suppliers.supplier_id=ave_price.supplier_id
 ```
-
 ![Resultat](abb3.png)
+
++ :information_source: :arrow_down: Ein SELECT-Statement kann insgesamt folgende Keywords enthalten:
+
+Keyword | Beschreibung
+:--- | -------:
+<span style="color:blue">**SELECT**</span> | Filtert Spalten ("*" für alle)
+<span style="color:blue">**FROM**</span> | Tabelle
+<span style="color:blue">**WHERE**</span> | Filtert Zeilen
+<span style="color:blue">**GROUP BY**</span> | Ermöglicht das Aggregieren auf Spalten, z. B. mit SUM(), MAX(), MIN(), COUNT(), AVG()
+<span style="color:blue">**HAVING**</span> | Filtert wieder Zeilen **nach** dem Aggregieren
+<span style="color:blue">**ORDER BY**</span> | Sortiert Ergebnis nach Spalte
+<span style="color:blue">**LIMIT**</span> | Limitiert die Ergebnisse auf eine bestimmte Anzahl, z. B. 100 | 
 
 ## SQL JOINS
 
