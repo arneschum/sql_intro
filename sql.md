@@ -336,3 +336,13 @@ INTERSECT
 SELECT product_name, quantity_per_unit, unit_price FROM products
 WHERE product_id != 1
 ```
+
+# DATA CONTROL LANGUAGE
+
+- Natürlich darf nicht jeder auf **alle** Daten zurückgreifen, diese müssen und können sehr feinteilig gegliedert werden:
+
+```sql
+GRANT 
+
+REVOKE 
+```
