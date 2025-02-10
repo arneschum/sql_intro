@@ -27,6 +27,120 @@ GRANT<br>REVOKE<br> | **Data control language (DCL)**
 + Transaction control erzwingt die Konsistenz beim Schreiben der Daten
 + Data Control Language (DCL) richtet die Zugangskontrolle für Datenbankobjekte ein. Über Nutzer und Rollen kann ein sehr filigraner Zugriffsschutz erstellt werden 
 
+# Data Definition Language (DDL)
+
+## Wie erstelle ich ein Datenmodell?
+
+An Anfang muss die Grundstuktur (Datenmodell) geschaffen werden, um Daten aufzunehmen. Später kann das Datenmodell auch geändert werden:
+
+- Das Datenmodell kann:
+  - Tabellen erzeugen (CREATE TABLE)
+  - Tabellen ändern (ALTER TABLE)
+  - Tabellen löschen (DROP TABLE)
+
+## Tabellen erzeugen
+
++ Tabellen zu erzeugen ist der Anfang aller Datenmodelle
++ Grundsätzlich wird es durch das `CREATE TABLE` Statement erstellt:
+  + der Name der Tabelle
+  + Spaltennamen und Datentypen
+  + Konsistenzprüfungen (Constraints) definiert
+    + Constraints können sein:
+      + CHECK (Domäne = Spalte)
+      + PRIMARY KEY (Entität = Tabelle)
+      + FOREIGN KEY (referentiell = zu anderen Tabellen)
+
+```sql
+--erzeugt Tabelle mit Spalten, Datentypen & Integritätsbedingungen
+CREATE TABLE tabelle (
+    id int PRIMARY KEY,     --PRIMARY KEY (Entität)
+    vorname varchar(50) NOT NULL, -- CHECK CONSTRAINT (Domäne)
+    nachname varchar(50) NOT NULL,
+    abteilungs_id smallint REFERENCES abteilung (id)  --FOREIGN KEY (referentiell)
+);
+```
+
+[mehr hierzu: CREATE TABLE](https://www.postgresql.org/docs/current/sql-altertable.html)
+
++ Tabellen können immer geändert werden, z. B.:
+  + Spalten ergänzt oder vom Datentyp geändert
+  + Integritätsbedingungen ergänzt oder verändert werden
+  + ... etc.
+
+```sql 
+ALTER TABLE table_name [ADD | DROP | ALTER] [COLUMN | CONSTRAINT] 
+```
+- oder gelöscht werden:
+
+```sql
+DROP TABLE table_name [CASCADE] --CASCADE = Lösche auch Objekte die vom gelöschten Objekt abhängen
+```  
+
+
+# Data Manipulation Language
+
+## Wie ändere ich Daten in den Tabellen?
+
+Nachdem das Datenmodell erstellt ist, muss es mit Leben (Daten) gefüllt werden:  
+
+- Daten können:
+  - eingefügt (INSERT)
+  - aktualisiert (UPDATE) oder
+  - gelöscht (DELETE) werden
+
+### Wie kriege ich Daten in die Datenbank?
+
+```sql
+--alle Spalten gegeben
+INSERT INTO tabelle VALUES (1, 'Wert 1', 'Wert 2');
+
+--mit Spaltenauswahl
+INSERT INTO (col2, col4) VALUES (1, 'Wert 1')
+
+-- Mehrere Zeilen
+INSERT INTO tabelle VALUES 
+(1, 'Wert 1'),
+(2, 'Wert 2')
+```
+
+```sql
+--Tabelle muss bereits bestehen
+COPY
+```
+
+```sql
+-- Neue Tabellen aus bestenden Tabellen erzeugen
+CREATE TABLE AS SELECT * FROM tabelle
+
+SELECT * INTO [table_name] FROM ...
+```
+### Automatisiert
+
+psql  
+
+IDE, z. B. python (import pyodbc, import psycopg)
+
+```sql
+UPDATE tabelle SET spalte = 'Wert' WHERE spalte = 'Wert'
+```
+
+```sql
+DELETE FROM tabelle WHERE spalte = 'Wert'
+```
+## Aufgabe 1
+
+Erstellen Sie über pgAdmin und seinem ERD-Tool ein Datenmodell, das eine Anwendung in ihrem Studium oder ähnliches implementiert. Was Sie modellieren können Sie beliebig wählen. Achten Sie aber bitte darauf, folgende Punkte zu integrieren:
+
+1) Das Datenmodell enthält ca. 5 Tabellen
+2) mindestens **eine** 1:n, n:m Beziehung zwischen den Tabellen
+3) Setzen Sie in ihrem Modell auch mindestens **eine** der 3 Integritätsbedingungen in den Tabellen um, d. h.:
++ Domänenintegrität
++ Primärschlüssel (für alle Tabellen)
++ Fremdschlüssel (für die 1:n & n:m Beziehungen)
+4) Füllen Sie die Tabellen mit ein paar Beispieldatensätzen (hier reichen wenige)
+
++ Provozieren Sie nun für jeden INSERT INTO Befehl eine Verletzung der Integritätsbedingungen. Wie sind die Fehlermeldungen?
+
 ### Datenabfrage (SELECT)
 
 + SELECT ist ein sehr mächtiger Befehl, um Daten aus Tabellen abzufragen

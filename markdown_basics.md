@@ -105,6 +105,15 @@ This is another regular paragraph.
 <input type="checkbox" checked> some checked text  
 <input type="checkbox"> some unchecked text  
 
+#Supported languages
+https://github.com/jincheng9/markdown_supported_languages
+
+
+```html
+<h1>This is a header</h1>
+
+```
+
 Extension: Markdown PDF -> https://marketplace.visualstudio.com/items?itemName=yzane.markdown-pdf 
 
 Extension: Markdown Preview Mermaid Support ->  https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid
