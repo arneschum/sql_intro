@@ -44,8 +44,6 @@
 
 + Für dieses Modul beschränken wir uns auf die GUI -> pgAdmin
 
- ## SQL auf einen Blick
-
 ## SQL auf einen Blick
 
 Statement| Zugehörig
@@ -55,7 +53,7 @@ CREATE<br>ALTER<br>DROP | **Data definition language (DDL)**
 INSERT<br>UPDATE<br>DELETE<br>MERGE<br>TRUNCATE<br> | **Data manipulation language (DML)**    
 COMMIT<br>ROLLBACK<br>SAVEPOINT<br> | **Transaction control**
 GRANT<br>REVOKE<br> | **Data control language (DCL)**
-<br>
+<br>  
 + :heavy_check_mark: Dies sind bereits alle möglichen SQL-Statements
 + Data definition language (DDL) ermöglicht das Erstellen oder Ändern des Datenmodells
 + Data Manipulation Language (DML) bezieht sich auf die Daten selbst, also das Hinzufügen, Ändern oder Löschen von Daten
@@ -376,28 +374,58 @@ WHERE product_id != 1
 
 + Es gibt Fälle bei komplexen Abfragen, in der man Zwischenergebnisse generieren kann, die man leichter verstehen und analysieren kann
 
-Ein kleines Beispiel:  
+Ein kleines Beispiel. Gegeben ist das ERM-Schema der Northwind-Datenbank:
 
-Dies kann man auf vielen Wegen lösen:
+![Quelle: https://github.com/yugabyte/yugabyte-db/wiki/Northwind-Sample-Database](erm_northwind.png)
 
-´´´sql
+Die Firma will einen Bonus für jeden Mitarbeiter (Tabelle employees) einen Bonus ausschütten und zwar abhängig von der Summe der verkauften Produkte (sum(unit_price) in Tabelle order_details) 
+
+> Was müssen wir dafür tun? :thinking:
+
+Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen, sollte auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer a) Unterabfrage, einer b) Common Table Expression (CTE) und einer c) temporären Tabelle:
+
+```sql
 
 -- mit einer Unterabfrage
 
-SELECT
+SELECT first_name, last_name, SUM(unit_price)
+FROM 
+(SELECT * FROM employees AS e
+LEFT JOIN orders AS o ON e.employee_id = o.employee_id
+LEFT JOIN order_details AS od ON o.order_id = od.order_id
+WHERE date_part('year', order_date) = 1997) as foo
+GROUP BY first_name, last_name
+ORDER BY sum DESC
 
 -- mit einer CTE (Common Table Expression)
 
-WITH blah AS (
-SELECT 
+WITH base_query AS (
+SELECT * FROM employees AS e
+LEFT JOIN orders AS o ON e.employee_id = o.employee_id
+LEFT JOIN order_details AS od ON o.order_id = od.order_id
+WHERE date_part('year', order_date) = 1997
 )
-SELECT 
+SELECT first_name, last_name, SUM(unit_price)
+FROM base_query
+GROUP BY first_name, last_name
+ORDER BY sum DESC
 
 -- mit einer temporären Tabelle
 
+CREATE TEMP TABLE base_query AS 
+SELECT first_name, last_name, unit_price FROM employees AS e
+LEFT JOIN orders AS o ON e.employee_id = o.employee_id
+LEFT JOIN order_details AS od ON o.order_id = od.order_id
+WHERE date_part('year', order_date) = 1997
 
+SELECT first_name, last_name, AVG(unit_price) 
+FROM base_query
+GROUP BY first_name, last_name
 
-´´´
+-- temporäre Tabellen existieren zwar nur zur Laufzeit, aber doch empfohlen sie zu löschen
+DROP TABLE base_query;
+
+```
 
 # DATA CONTROL LANGUAGE
 
