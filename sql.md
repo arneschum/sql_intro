@@ -2,6 +2,26 @@
 
 # Structured Query Language (SQL)
 
+## Warum SQL?
+
++ Datenbanken und SQL sind aus der Informatik nicht mehr wegzudenken und bilden die Basis für alle Datenverarbeitungsprozesse inklusive:
+  + Speichern von Daten
+  + Analysieren von Daten
+  + Visualisieren von Daten
++ Alle Daten, auch die Daten die im Internet getauscht, dargestellt und gepostet werden haben als Backend eine Datenbank, die z. B. genutzt wird für:
+  + Formulardaten zum Einkaufen, Registrieren und Anmelden 
+  + Content-Management-Systemen
+  + Blogs & Social Media
+  + Die Daten werden vor dem Speichern in SQL übersetzt und als Transaktion auf ACID überprüft
++ SQL ist auch zentraler Bestandteil für neue Felder wie:
+  + KI/AI
+  + Machine Learning
+  + Natural Language Processing
+  + Robotik
+  + Industrie 4.0
+  + ...
+
+## Was kann SQL?
 + SQL erlaubt die Abfrage, das Editieren, Ändern und Löschen von Informationen in einer Datenbank
 + SQL ist standardisiert und funktioniert (fast) auf jedem Datenbanksystem gleich
 + Der Standard wird festgelegt von der American National Standards Institute (ANSI) in 1986 und von der International Organization for Standardization (ISO) in 1987
@@ -9,7 +29,22 @@
 + Allerdings hat jedes Datenbanksystem auch immer noch Abweichungen (flavours, dialects)  und eigene Implementationen  
 + SQL gehört zur 4. Generation (4GL) an Programmiersprachen und ist rein deklarativ:
   + Daten werden angefordert, man hat aber keinen Einfluss, wie diese Daten abgeholt werden
-  + Diese Logik ist komplett dem RDMS überlassen 
+  + Diese Logik ist komplett dem RDMS überlassen
+  + Unter der Haube arbeitet ein Query Optimiser, der Anfragen optimiert und sie im RAM bereitstellt
+  + Auch wo und wie die Daten physisch gespeichert werden, ist komplett dem RDBMS überlassen
+    + dies erschwert einen einfachen Austausch der Daten wiederum 
+
+## Wie "spreche" ich mit der Datenbank?
+
++ Datenbankmanagementsysteme erlauben in der Regel den Zugriff über:
+  + eine graphische Benutzeroberfläche (GUI)
+    + für PostgreSQL ist das pgAdmin
+  + über die Kommandozeile: psql -h localhost postgres postgres
+  + über eine Schnittstelle (API, z. B. pyodbc für Python)
+
++ Für dieses Modul beschränken wir uns auf die GUI -> pgAdmin
+
+ ## SQL auf einen Blick
 
 ## SQL auf einen Blick
 
@@ -336,6 +371,33 @@ INTERSECT
 SELECT product_name, quantity_per_unit, unit_price FROM products
 WHERE product_id != 1
 ```
+
+## Unterabfragen, Common Table Expressions (CTE) und temporäre Tabellen
+
++ Es gibt Fälle bei komplexen Abfragen, in der man Zwischenergebnisse generieren kann, die man leichter verstehen und analysieren kann
+
+Ein kleines Beispiel:  
+
+Dies kann man auf vielen Wegen lösen:
+
+´´´sql
+
+-- mit einer Unterabfrage
+
+SELECT
+
+-- mit einer CTE (Common Table Expression)
+
+WITH blah AS (
+SELECT 
+)
+SELECT 
+
+-- mit einer temporären Tabelle
+
+
+
+´´´
 
 # DATA CONTROL LANGUAGE
 
