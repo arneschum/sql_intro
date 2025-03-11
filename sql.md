@@ -340,7 +340,7 @@ WHERE order_details.order_id=10248
 
 + JOINS können INNER, OUTER oder CROSS sein
 
-![JOINS](/home/anush/data/docker/northwind/joins.png)
+![JOINS](joins.png)
 [Source: https://www.linkedin.com/pulse/sql-inner-join-tutorial-matt-l](https://www.linkedin.com/pulse/sql-inner-join-tutorial-matt-l)
 
 ## SET Operatoren
@@ -429,10 +429,34 @@ DROP TABLE base_query;
 
 # DATA CONTROL LANGUAGE
 
-- Natürlich darf nicht jeder auf **alle** Daten zurückgreifen, diese müssen und können sehr feinteilig gegliedert werden:
+- Datenbankmanagementsysteme regeln Zugriffe über Benutzer und Rollen
+  - :thinking: Warum gibt es diese Unterscheidung?
+  - Rollen und Benutzer werden global (auf dem Datenbankcluster angelegt) und sind somit nicht auf Datenbankebene
+  - 
 
 ```sql
-GRANT 
+-- Rolle anlegen, die sich auf dem Datenbankcluster authentifizieren (LOGIN) kann
+CREATE ROLE rolename WITH LOGIN PASSWORD '******';;
+-- Nutzer zu Rolle hinzufügen
+GRANT rolename TO myuser;
+-- Rolle löschen
+DROP ROLE name;
 
-REVOKE 
+```
+- Natürlich darf nicht jeder auf **alle** Daten zurückgreifen, diese müssen und können sehr feinteilig gegliedert werden:
+
+[PostgreSQL Privileges](https://www.postgresql.org/docs/current/ddl-priv.html)
+
+```sql
+-- Das CREATE ROLE Beispiel oben erlaubt das Verbinden auf alle Datenbanken innerhalb des Clusters
+-- Um diese Rechte einzuschränken, z. B. nur das Verbinden auf EINE Datenbank zu erlauben, müssen Rechte auf Datenbankebene entzogen werden
+
+REVOKE CONNECT ON DATABASE postgres FROM rolename;
+
+-- ... und im Anschluss wiederum für die Datebank gesetzt werden
+
+GRANT CONNECT ON DATABASE mydb TO rolename;
+GRANT USAGE ON SCHEMA public TO rolename;
+GRANT SELECT, INSERT, UPDATE, DELETE ON tablename TO rolename;
+
 ```
