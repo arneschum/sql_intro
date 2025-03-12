@@ -13,8 +13,10 @@
   + Content-Management-Systemen
   + Blogs & Social Media
   + Die Daten werden bei der Eingabe auf einer Webseite über ein Datenaustauschformat, z. B. JSON oder XML vom Client (Webseite) zum Server (Datenbank) geschickt
-    + Hierbei wird geprüft, ob die Daten konform (konsistent)  
-  + Die Daten werden vor dem Speichern in SQL übersetzt und als Transaktion auf ACID überprüft
+    + Hierbei wird geprüft, ob die Daten 
+      1) konform (konsistent) zum Datenmodell sind (Stichwort: ACID, mehr dazu später :arrow_down:) und 
+      2) werden vom Austauschformat in SQL übersetzt (von einem Objekt in relationale Daten überführt (Object-Relational-Mapping))  
+    + Dies geschieht meist vollautomatisiert und ohne größeren Aufwand beim Programmieren, da es hierfür zahlreiche Bibliotheken gibt, z. B. Java Hibernate
 + SQL ist auch zentraler Bestandteil für neue Felder wie:
   + KI/AI
   + Machine Learning
@@ -32,9 +34,9 @@
 + SQL gehört zur 4. Generation (4GL) an Programmiersprachen und ist rein deklarativ:
   + Daten werden angefordert, man hat aber keinen Einfluss, wie diese Daten abgeholt werden
   + Diese Logik ist komplett dem RDMS überlassen
-  + Unter der Haube arbeitet ein Query Optimiser, der Anfragen optimiert und sie im RAM bereitstellt
+  + Unter der Haube arbeitet ein Query Optimiser, der Anfragen optimiert und sie im Arbeitsspeicher (RAM) bereitstellt
   + Auch wo und wie die Daten physisch gespeichert werden, ist komplett dem RDBMS überlassen
-    + dies erschwert einen einfachen Austausch der Daten wiederum 
+    + dies erschwert aber auch einen einfachen Austausch der Daten 
 
 ## Wie "spreche" ich mit der Datenbank?
 
@@ -122,6 +124,7 @@ Nachdem das Datenmodell erstellt ist, muss es mit Leben (Daten) gefüllt werden:
   - eingefügt (INSERT)
   - aktualisiert (UPDATE) oder
   - gelöscht (DELETE) werden
+  - oder alle auf einmal zwischen 2 Tabellen angewendet werden (MERGE)
 
 ### Wie kriege ich Daten in die Datenbank?
 
@@ -139,8 +142,15 @@ INSERT INTO tabelle VALUES
 ```
 
 ```sql
---Tabelle muss bereits bestehen
-COPY
+-- Daten in Tabelle einfügen (diese muss bereits bestehen)
+COPY table_name (column1, column2, ...)
+FROM '/path/to/file.csv'
+WITH (FORMAT csv, HEADER true);
+
+-- Daten aus Tabelle exportieren
+COPY table_name (column1, column2, ...)
+TO '/path/to/output.csv'
+WITH (FORMAT csv, HEADER true);
 ```
 
 ```sql
