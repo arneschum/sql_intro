@@ -12,6 +12,8 @@
   + Formulardaten zum Einkaufen, Registrieren und Anmelden 
   + Content-Management-Systemen
   + Blogs & Social Media
+  + Die Daten werden bei der Eingabe auf einer Webseite über ein Datenaustauschformat, z. B. JSON oder XML vom Client (Webseite) zum Server (Datenbank) geschickt
+    + Hierbei wird geprüft, ob die Daten konform (konsistent)  
   + Die Daten werden vor dem Speichern in SQL übersetzt und als Transaktion auf ACID überprüft
 + SQL ist auch zentraler Bestandteil für neue Felder wie:
   + KI/AI
@@ -430,9 +432,11 @@ DROP TABLE base_query;
 # DATA CONTROL LANGUAGE
 
 - Datenbankmanagementsysteme regeln Zugriffe über Benutzer und Rollen
-  - :thinking: Warum gibt es diese Unterscheidung?
-  - Rollen und Benutzer werden global (auf dem Datenbankcluster angelegt) und sind somit nicht auf Datenbankebene
-  - 
+  - :thinking: Warum gibt es diese Unterscheidung überhaupt?
+  - Rollen und Benutzer werden global (auf dem Datenbankcluster angelegt) und somit nicht auf Datenbankebene
+  - Rollen und Benutzer können aber Datenbankobjekte Beispieldatensatz
+    - Aus diesem Grund ist es nicht unbedingt einfach Rollen zu löschen, dies kann erst mit Umschreibung der Besitzverhältnisse geschehen
+  - Rollen können Rechte vererben
 
 ```sql
 -- Rolle anlegen, die sich auf dem Datenbankcluster authentifizieren (LOGIN) kann
