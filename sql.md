@@ -54,7 +54,7 @@ Statement| Zugehörig
 ------- | -------
 SELECT | **Data retrieval (Abfrage)**
 CREATE<br>ALTER<br>DROP | **Data definition language (DDL)**
-INSERT<br>UPDATE<br>DELETE<br>MERGE<br>TRUNCATE<br> | **Data manipulation language (DML)**    
+INSERT<br>UPDATE<br>DELETE<br>TRUNCATE<br> | **Data manipulation language (DML)**    
 COMMIT<br>ROLLBACK<br>SAVEPOINT<br> | **Transaction control**
 GRANT<br>REVOKE<br> | **Data control language (DCL)**
 <br>  
@@ -62,7 +62,13 @@ GRANT<br>REVOKE<br> | **Data control language (DCL)**
 + Data definition language (DDL) ermöglicht das Erstellen oder Ändern des Datenmodells
 + Data Manipulation Language (DML) bezieht sich auf die Daten selbst, also das Hinzufügen, Ändern oder Löschen von Daten
 + Transaction control erzwingt die Konsistenz beim Schreiben der Daten
-+ Data Control Language (DCL) richtet die Zugangskontrolle für Datenbankobjekte ein. Über Nutzer und Rollen kann ein sehr filigraner Zugriffsschutz erstellt werden 
++ Data Control Language (DCL) richtet die Zugangskontrolle für Datenbankobjekte ein. Über Nutzer und Rollen kann ein sehr filigraner Zugriffsschutz erstellt werden
+    
+:arrow_down: Zur Einführung ein Code-Beispiel, wie wir es auf den nächsten Seiten öfter sehen werden
+```sql
+-- Ich bin ein Kommentar, die nächste Zeile ist SQL
+SELECT * FROM products;
+```  
 
 # Data Definition Language (DDL)
 
@@ -78,7 +84,7 @@ An Anfang muss die Grundstuktur (Datenmodell) geschaffen werden, um Daten aufzun
 ## Tabellen erzeugen
 
 + Tabellen zu erzeugen ist der Anfang aller Datenmodelle
-+ Grundsätzlich wird es durch das `CREATE TABLE` Statement erstellt:
++ Grundsätzlich wird es durch das `CREATE TABLE` Statement erstellt und enthält folgende Elemente:
   + der Name der Tabelle
   + Spaltennamen und Datentypen
   + Konsistenzprüfungen (Constraints) definiert
@@ -124,10 +130,20 @@ Nachdem das Datenmodell erstellt ist, muss es mit Leben (Daten) gefüllt werden:
   - eingefügt (INSERT)
   - aktualisiert (UPDATE) oder
   - gelöscht (DELETE) werden
-  - oder alle auf einmal zwischen 2 Tabellen angewendet werden (MERGE)
 
 ### Wie kriege ich Daten in die Datenbank?
 
+- Wenn wir das Datenmodell erschaffen haben, müssen wir die Tabellen mit Leben füllen. Nachfolgend sind Bespiele mit folgenden Befehlen:
+  - INSERT INTO
+    - Tabelle muss existieren
+  - COPY (transferiert Daten in eine Tabelle oder exportiert diese in eine Datei, z. B. *.csv)
+    - Tabelle muss existieren
+  - CREATE TABLE AS SELECT
+    - Tabelle wird erstellt
+  - SELECT * INTO ... FROM
+    - Tabelle wird erstellt   
+
+  
 ```sql
 --alle Spalten gegeben
 INSERT INTO tabelle VALUES (1, 'Wert 1', 'Wert 2');
@@ -142,7 +158,7 @@ INSERT INTO tabelle VALUES
 ```
 
 ```sql
--- Daten in Tabelle einfügen (diese muss bereits bestehen)
+-- Daten in Tabelle einfügen
 COPY table_name (column1, column2, ...)
 FROM '/path/to/file.csv'
 WITH (FORMAT csv, HEADER true);
@@ -154,7 +170,7 @@ WITH (FORMAT csv, HEADER true);
 ```
 
 ```sql
--- Neue Tabellen aus bestenden Tabellen erzeugen
+-- Neue Tabellen aus bestehenden Tabellen erzeugen
 CREATE TABLE AS SELECT * FROM tabelle
 
 SELECT * INTO [table_name] FROM ...
@@ -164,13 +180,26 @@ SELECT * INTO [table_name] FROM ...
 psql  
 
 IDE, z. B. python (import pyodbc, import psycopg)
+ 
+### Daten aktualisieren
 
 ```sql
-UPDATE tabelle SET spalte = 'Wert' WHERE spalte = 'Wert'
+UPDATE tabelle SET spalte = 'neuer Wert' WHERE spalte = 'alter Wert'
+
+-- Hier ein komplizierteres UPDATE statement, das Zellen basierend auf einem anderen Spaltenwert updated:
+UPDATE employees
+SET salary = su.new_salary
+FROM salary_updates su
+WHERE employees.id = su.id;
 ```
+
+### Daten löschen
 
 ```sql
 DELETE FROM tabelle WHERE spalte = 'Wert'
+
+-- Was macht folgender Befehl? :-D
+DELETE FROM employees;
 ```
 ## Aufgabe 1
 
@@ -186,18 +215,12 @@ Erstellen Sie über pgAdmin und seinem ERD-Tool ein Datenmodell, das eine Anwend
 
 + Provozieren Sie nun für jeden INSERT INTO Befehl eine Verletzung der Integritätsbedingungen. Wie sind die Fehlermeldungen?
 
-### Datenabfrage (SELECT)
+## Datenabfrage (SELECT)
 
 + SELECT ist ein sehr mächtiger Befehl, um Daten aus Tabellen abzufragen
 + Wenn die Daten bereits definiert sind (DDL), bewegt man sich fast ausschließlich mit diesem Befehl, um Daten zu analysieren und auszuwerten
 + Daten können sehr effizient zusammengefügt und verbunden werden. 
   + Die Analyse von Daten wird im Vergleich zu z. B. Excel wesentlich flexibler und einfacher
-
-```sql
--- Ich bin ein Kommentar
-SELECT * FROM products;
-```
-+ :arrow_up: Zur Einführung ein Code-Beispiel, wie wir es auf den nächsten Seiten öfter sehen werden
 
 + :arrow_down: Ein wichtiger Einstieg in SQL ist die Selektion von Spalten und Zeilen, fangen wir mit den Spalten an: 
 
