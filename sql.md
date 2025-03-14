@@ -217,8 +217,8 @@ Erstellen Sie über pgAdmin und seinem ERD-Tool ein Datenmodell, das eine Anwend
 
 ## Datenabfrage (SELECT)
 
-+ SELECT ist ein sehr mächtiger Befehl, um Daten aus Tabellen abzufragen
-+ Wenn die Daten bereits definiert sind (DDL), bewegt man sich fast ausschließlich mit diesem Befehl, um Daten zu analysieren und auszuwerten
++ `SELECT` ist ein sehr mächtiger Befehl, um Daten aus Tabellen abzufragen
++ Wenn die Daten bereits definiert (DDL) und befüllt (DML) sind, bewegt man sich fast ausschließlich mit diesem Befehl, um Daten zu analysieren und auszuwerten
 + Daten können sehr effizient zusammengefügt und verbunden werden. 
   + Die Analyse von Daten wird im Vergleich zu z. B. Excel wesentlich flexibler und einfacher
 
@@ -226,15 +226,15 @@ Erstellen Sie über pgAdmin und seinem ERD-Tool ein Datenmodell, das eine Anwend
 
 ```sql
 -- Wie selektiere ich Spalten?
-SELECT product_name, quantity_per_unit FROM products; --product_name = Spalte
+SELECT product_name, quantity_per_unit FROM products; --product_name & quantity_per_unit = Spaltennamen
 
-SELECT * FROM products --alle Spalten
+SELECT * FROM products; --alle Spalten
 ```
 ### Operatoren
 
-+ Wie selektiere (filtere) ich Zeilen? :arrow_down::
++ Wie selektiere (filtere) ich Zeilen?:
 
-+ mit dem WHERE statement:
++ mit dem WHERE statement :arrow_down::
 
 ```sql
 SELECT * FROM products
@@ -251,20 +251,21 @@ Operator | Bedeutung
 \>= | größer gleich
 <> oder != | ungleich
 
+```sql
+-- Alle Produkte größer gleich $50
+SELECT * FROM products
+WHERE unit_price >= 50
+```
+
 #### Null-Werte
+
++ :information_source: Null-Werte stehen für unbekannte Werte 
 
 Operator | Bedeutung
 ---------|----------
 is Null | Null-Werte 
 is not Null | nicht Null-Werte
 
-+ :information_source: Null-Werte stehen für unbekannte Werte 
-
-```sql
--- Alle Produkte größer gleich $50
-SELECT * FROM products
-WHERE unit_price >= 50
-```
 #### AND, NOT, OR
 
 Operator | Beschreibung
@@ -276,16 +277,14 @@ NOT | Negation
 ##### Beispiele
 ```sql
 -- Alle Produkte, die mit "A" anfangen UND über 50 $ kosten
-SELECT * FROM products WHERE product_name LIKE 'A%' and unit_price > 50
--- Alle Produkte, die **nicht** mit "B" anfangen 
-SELECT * FROM products WHERE product_name NOT LIKE ('B%')  
+SELECT * FROM products WHERE product_name LIKE 'A%' and unit_price > 50 
 ```
 
 ```sql
--- Welche Produkte kosten über $50?
+-- Welche Produkte kosten über zwischen $ 50-100?
 SELECT product_id, product_name
 FROM products
-WHERE unit_price >= 50;
+WHERE unit_price >= 50 and unit_price <= 100;
 ```
 + Eine Besonderheit im `WHERE` Keyword ist das Filtern mit `LIKE`:
 
@@ -297,12 +296,15 @@ WHERE productname LIKE 'A%'
 WHERE productname LIKE '%a%'
 -- 3) Mit "A" endet
 WHERE productname LIKE '%a'
+
+-- Alle Produkte, die **nicht** mit "B" anfangen 
+SELECT * FROM products WHERE product_name NOT LIKE ('B%') 
 ```
 
 ### Aggregate Functions
 
 + Aggregatfunktionen sind Funktionen, die über alle oder bestimmte Spalten aggregieren 
-+ :arrow_up: Beispiele siehe `GROUP BY` oben
++ :arrow_donw: Beispiele siehe `GROUP BY` oben
 
 ```sql
 -- Was ist das teuerste Produkt? (Aggregation auf gesamte Tabelle)
@@ -317,7 +319,7 @@ FROM products
 GROUP BY supplier_id
 ORDER BY avg
 ```
-+ :arrow_up: :exclamation: Jede Spalte, die im `SELECT ` Keyword auftaucht (außer der Aggregationsfunktion selbst), muss auch im `GROUP BY` Keyword vorkommen
++ :arrow_up: :exclamation: Jede Spalte, die im `SELECT` Keyword auftaucht (außer der Aggregationsfunktion selbst), muss auch im `GROUP BY` Keyword vorkommen
 
 ```sql
 -- Geht das bitte mit aufgelöstem Händlername?
@@ -327,6 +329,8 @@ LEFT JOIN
 FROM products
 GROUP BY supplier_id
 ORDER BY avg) ave_price ON suppliers.supplier_id=ave_price.supplier_id
+
+HIER FEHLT GANZ NORMALER JOIN 
 ```
 ![Resultat](abb3.png)
 
@@ -363,6 +367,8 @@ customer_id | product_id | Kaufdatum
 2 | 16 | 03.01.2025
 
 + :arrow_up: Um Daten wieder lesbar zu machen, müssen Sie über einen JOIN wieder verknüpft werden, d. h. die Schlüssel (hier Fremdschlüssel) der Primärtabelle angehängt werden
+
+Abbildung denormalisiert
 
 ```sql
 --Welche Firma (customer) hat welche Produkte gekauft? 
@@ -413,15 +419,15 @@ Ein kleines Beispiel. Gegeben ist das ERM-Schema der Northwind-Datenbank:
 
 ![Quelle: https://github.com/yugabyte/yugabyte-db/wiki/Northwind-Sample-Database](erm_northwind.png)
 
-Die Firma will einen Bonus für jeden Mitarbeiter (Tabelle employees) einen Bonus ausschütten und zwar abhängig von der Summe der verkauften Produkte (sum(unit_price) in Tabelle order_details) 
+Die Firma will für jeden Mitarbeiter (Tabelle employees) einen Bonus ausschütten und zwar abhängig von der Summe der verkauften Produkte (sum(unit_price) in Tabelle order_details) 
 
 > Was müssen wir dafür tun? :thinking:
 
-Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen, sollte auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer a) Unterabfrage, einer b) Common Table Expression (CTE) und einer c) temporären Tabelle:
+Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen,kann (muss aber nicht) auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer a) Unterabfrage (subquery), einer b) Common Table Expression (CTE) und einer c) temporären Tabelle:
 
 ```sql
 
--- mit einer Unterabfrage
+-- mit einer Unterabfrage (subquery)
 
 SELECT first_name, last_name, SUM(unit_price)
 FROM 
@@ -462,12 +468,63 @@ DROP TABLE base_query;
 
 ```
 
+- Übrigens, wo können in SQL Unterabfragen stehen?
+  
+```sql
+-- Im SELECT statements
+
+-- Im SELECT keyworld selbst
+SELECT (SELECT 1) FROM ... --Hier darf nur in Skalarwert zurückkommen
+
+-- IM FROM keyword
+SELECT foo.* FROM
+(SELECT * FROM products) as foo -- Diese Subquery muss einen alias enthalten 
+
+-- Im WHERE keyword
+SELECT first_name, last_name FROM employees
+WHERE salary > (SELECT AVG(salary) from employees)
+
+-- Im HAVING keyword
+SELECT department, AVG(salary) FROM employees GROUP BY department 
+HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
+
+--nach dem IN keyword
+SELECT * FROM employess
+WHERE department_id IN (SELECT id FROM department WHERE name='Marketing' or name = 'Vertrieb') -- Hier darf nur eine Spalte in der Subquery zurückkommen  
+
+-- Subqueries dürfen auch in DDL und DML statements genutzt werden
+
+-- Wie schon bekannt beim Schreiben einer neuen Tabelle:
+-- Hier: Schreibe eine neue Tabelle der "high earners"
+CREATE TABLE AS CREATE TABLE high_salary_employees AS 
+SELECT * FROM employees WHERE salary > (SELECT AVG(salary) FROM employees); 
+
+-- Subquery um eine neue Spalte CREATE TABLE high_salary_employees AS 
+ALTER TABLE employees ADD COLUMN avg_salary NUMERIC;
+UPDATE employees SET avg_salary = (SELECT AVG(salary) FROM employees);
+
+-- Subquery um Daten einzufügen
+-- Füge high earners in die high salary_employees ein
+INSERT INTO high_salary_employees (id, name, salary, department_id)
+SELECT id, name, salary, department_id FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);
+
+-- Im UPDATE statement
+-- Erhöhe das Gehalt jede(r) Mitarbeiter*in in der Verkaufsabteilung (Sales) um 10%
+UPDATE employees 
+SET salary = salary * 1.10 
+WHERE department_id IN (SELECT id FROM departments WHERE name = 'Sales');
+
+-- Im DELETE statement
+-- Lösche alle Mitarbeiter, die keiner Abteilung angehören
+DELETE FROM employees 
+WHERE department_id NOT IN (SELECT id FROM departments);
+```
 # DATA CONTROL LANGUAGE
 
 - Datenbankmanagementsysteme regeln Zugriffe über Benutzer und Rollen
   - :thinking: Warum gibt es diese Unterscheidung überhaupt?
   - Rollen und Benutzer werden global (auf dem Datenbankcluster angelegt) und somit nicht auf Datenbankebene
-  - Rollen und Benutzer können aber Datenbankobjekte Beispieldatensatz
+  - Rollen und Benutzer können aber Datenbankobjekte besitzen
     - Aus diesem Grund ist es nicht unbedingt einfach Rollen zu löschen, dies kann erst mit Umschreibung der Besitzverhältnisse geschehen
   - Rollen können Rechte vererben
 
