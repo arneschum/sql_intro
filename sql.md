@@ -53,7 +53,8 @@ CREATE<br>ALTER<br>DROP | **Data definition language (DDL)**
 INSERT<br>UPDATE<br>DELETE<br>MERGE<br>TRUNCATE<br> | **Data manipulation language (DML)**    
 COMMIT<br>ROLLBACK<br>SAVEPOINT<br> | **Transaction control**
 GRANT<br>REVOKE<br> | **Data control language (DCL)**
-<br>  
+<br>
+    
 + :heavy_check_mark: Dies sind bereits alle möglichen SQL-Statements
 + Data definition language (DDL) ermöglicht das Erstellen oder Ändern des Datenmodells
 + Data Manipulation Language (DML) bezieht sich auf die Daten selbst, also das Hinzufügen, Ändern oder Löschen von Daten
@@ -160,17 +161,24 @@ UPDATE tabelle SET spalte = 'Wert' WHERE spalte = 'Wert'
 ```sql
 DELETE FROM tabelle WHERE spalte = 'Wert'
 ```
-## Aufgabe 1
+## Aufgabe 2
+
+:exclamation: Die folgende Aufgabe enthält zunächst die Erstellung eines konzeptionellen Datenbank-Modells (ERM), das wir in SQL transformieren und aus dem wir ein physisches Modell generieren und mit Beispieldaten füllen und Integritätsverletzungen provozieren. Bitte geben Sie für die Aufgabe ein Lösungsdokument im *.docx oder *.pdf Format ab, aus dem ALLE wichtigen Schritte hervorgehen.   
 
 Erstellen Sie über pgAdmin und seinem ERD-Tool ein Datenmodell, das eine Anwendung in ihrem Studium oder ähnliches implementiert. Was Sie modellieren können Sie beliebig wählen. Achten Sie aber bitte darauf, folgende Punkte zu integrieren:
 
 1) Das Datenmodell enthält ca. 5 Tabellen
+    + Achten Sie auf die richtige Vergabe des Datenyps
+    + Jede Tabelle sollte auch einen Primärschlüssel haben
+    + Wo es Sinn ergibt, setzen Sie auch Constraints (Not Null, CHECK) 
 2) mindestens **eine** 1:n, n:m Beziehung zwischen den Tabellen
+    + Setzen Sie hier die referentielle Integrität für die Beziehungen zwischen den Tabellen
 3) Setzen Sie in ihrem Modell auch mindestens **eine** der 3 Integritätsbedingungen in den Tabellen um, d. h.:
 + Domänenintegrität
 + Primärschlüssel (für alle Tabellen)
 + Fremdschlüssel (für die 1:n & n:m Beziehungen)
-4) Füllen Sie die Tabellen mit ein paar Beispieldatensätzen (hier reichen wenige)
+4) Lassen Sie sich aus dem graphischen Modell SQL generieren (Generate SQL) und spielen Sie diese Statements zurück in eine Datenbank
+5) Füllen Sie die Tabellen mit ein paar Beispieldatensätzen (hier reichen wenige)
 
 + Provozieren Sie nun für jeden INSERT INTO Befehl eine Verletzung der Integritätsbedingungen. Wie sind die Fehlermeldungen?
 
@@ -382,11 +390,14 @@ Die Firma will einen Bonus für jeden Mitarbeiter (Tabelle employees) einen Bonu
 
 > Was müssen wir dafür tun? :thinking:
 
-Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen, sollte auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer a) Unterabfrage, einer b) Common Table Expression (CTE) und einer c) temporären Tabelle:
+Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen, sollte auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer 
++ a) Unterabfrage, einer 
++ b) Common Table Expression (CTE) und einer 
++ c) temporären Tabelle:
 
 ```sql
 
--- mit einer Unterabfrage
+-- a) mit einer Unterabfrage
 
 SELECT first_name, last_name, SUM(unit_price)
 FROM 
@@ -396,31 +407,42 @@ LEFT JOIN order_details AS od ON o.order_id = od.order_id
 WHERE date_part('year', order_date) = 1997) as foo
 GROUP BY first_name, last_name
 ORDER BY sum DESC
+```
+Unterabfragen dürfen in folgenden Keywords und Statements verwendet werden:
+  - SELECT
+  - FROM
+  - WHERE 
+  - HAVING
+  - ORDER BY
+  - INSERT, UPDATE, DELETE statements
 
--- mit einer CTE (Common Table Expression)
+```sql
+-- b) mit einer CTE (Common Table Expression)
 
 WITH base_query AS (
 SELECT * FROM employees AS e
 LEFT JOIN orders AS o ON e.employee_id = o.employee_id
 LEFT JOIN order_details AS od ON o.order_id = od.order_id
 WHERE date_part('year', order_date) = 1997
+--, hier können noch unbegrenzt andere SELECT statements folgen 
 )
+--in der äußeren Abfrage kann auf die inneren Abfragen (WITH) zugegriffem werden 
 SELECT first_name, last_name, SUM(unit_price)
 FROM base_query
 GROUP BY first_name, last_name
 ORDER BY sum DESC
 
--- mit einer temporären Tabelle
+-- c) mit einer temporären Tabelle
 
 CREATE TEMP TABLE base_query AS 
 SELECT first_name, last_name, unit_price FROM employees AS e
 LEFT JOIN orders AS o ON e.employee_id = o.employee_id
 LEFT JOIN order_details AS od ON o.order_id = od.order_id
-WHERE date_part('year', order_date) = 1997
+WHERE date_part('year', order_date) = 1997;
 
 SELECT first_name, last_name, AVG(unit_price) 
 FROM base_query
-GROUP BY first_name, last_name
+GROUP BY first_name, last_name;
 
 -- temporäre Tabellen existieren zwar nur zur Laufzeit, aber doch empfohlen sie zu löschen
 DROP TABLE base_query;
@@ -436,3 +458,7 @@ GRANT
 
 REVOKE 
 ```
+
+# Aufgabe 3
+
+SQL-Abfragen
