@@ -227,5 +227,14 @@ Extension: Markdwon Emoji
 
 Extension: Markdown Shortcuts
 
+Extension: Markdown Image
++ Paste to Clipboad
++ right-click Paste
+![alt text](image-1.png)
 
+Extension Markdown Footnotes
+This is a quote [^1], followed by another [^2]
+
+[^1]: Source 1
+[^2]: Source 2
 

@@ -12,7 +12,11 @@
   + Formulardaten zum Einkaufen, Registrieren und Anmelden 
   + Content-Management-Systemen
   + Blogs & Social Media
-  + Die Daten werden vor dem Speichern in SQL übersetzt und als Transaktion auf ACID überprüft
+  + Die Daten werden bei der Eingabe auf einer Webseite über ein Datenaustauschformat, z. B. JSON oder XML vom Client (Webseite) zum Server (Datenbank) geschickt
+    + Hierbei wird geprüft, ob die Daten 
+      1) konform (konsistent) zum Datenmodell sind (Stichwort: ACID, mehr dazu später :arrow_down:) und 
+      2) werden vom Austauschformat in SQL übersetzt (von einem Objekt in relationale Daten überführt (Object-Relational-Mapping))  
+    + Dies geschieht meist vollautomatisiert und ohne größeren Aufwand beim Programmieren, da es hierfür zahlreiche Bibliotheken gibt, z. B. Java Hibernate
 + SQL ist auch zentraler Bestandteil für neue Felder wie:
   + KI/AI
   + Machine Learning
@@ -30,9 +34,9 @@
 + SQL gehört zur 4. Generation (4GL) an Programmiersprachen und ist rein deklarativ:
   + Daten werden angefordert, man hat aber keinen Einfluss, wie diese Daten abgeholt werden
   + Diese Logik ist komplett dem RDMS überlassen
-  + Unter der Haube arbeitet ein Query Optimiser, der Anfragen optimiert und sie im RAM bereitstellt
+  + Unter der Haube arbeitet ein Query Optimiser, der Anfragen optimiert und sie im Arbeitsspeicher (RAM) bereitstellt
   + Auch wo und wie die Daten physisch gespeichert werden, ist komplett dem RDBMS überlassen
-    + dies erschwert einen einfachen Austausch der Daten wiederum 
+    + dies erschwert aber auch einen einfachen Austausch der Daten 
 
 ## Wie "spreche" ich mit der Datenbank?
 
@@ -50,7 +54,7 @@ Statement| Zugehörig
 ------- | -------
 SELECT | **Data retrieval (Abfrage)**
 CREATE<br>ALTER<br>DROP | **Data definition language (DDL)**
-INSERT<br>UPDATE<br>DELETE<br>MERGE<br>TRUNCATE<br> | **Data manipulation language (DML)**    
+INSERT<br>UPDATE<br>DELETE<br>TRUNCATE<br> | **Data manipulation language (DML)**    
 COMMIT<br>ROLLBACK<br>SAVEPOINT<br> | **Transaction control**
 GRANT<br>REVOKE<br> | **Data control language (DCL)**
 <br>
@@ -59,7 +63,13 @@ GRANT<br>REVOKE<br> | **Data control language (DCL)**
 + Data definition language (DDL) ermöglicht das Erstellen oder Ändern des Datenmodells
 + Data Manipulation Language (DML) bezieht sich auf die Daten selbst, also das Hinzufügen, Ändern oder Löschen von Daten
 + Transaction control erzwingt die Konsistenz beim Schreiben der Daten
-+ Data Control Language (DCL) richtet die Zugangskontrolle für Datenbankobjekte ein. Über Nutzer und Rollen kann ein sehr filigraner Zugriffsschutz erstellt werden 
++ Data Control Language (DCL) richtet die Zugangskontrolle für Datenbankobjekte ein. Über Nutzer und Rollen kann ein sehr filigraner Zugriffsschutz erstellt werden
+    
+:arrow_down: Zur Einführung ein Code-Beispiel, wie wir es auf den nächsten Seiten öfter sehen werden
+```sql
+-- Ich bin ein Kommentar, die nächste Zeile ist SQL
+SELECT * FROM products;
+```  
 
 # Data Definition Language (DDL)
 
@@ -75,7 +85,7 @@ An Anfang muss die Grundstuktur (Datenmodell) geschaffen werden, um Daten aufzun
 ## Tabellen erzeugen
 
 + Tabellen zu erzeugen ist der Anfang aller Datenmodelle
-+ Grundsätzlich wird es durch das `CREATE TABLE` Statement erstellt:
++ Grundsätzlich wird es durch das `CREATE TABLE` Statement erstellt und enthält folgende Elemente:
   + der Name der Tabelle
   + Spaltennamen und Datentypen
   + Konsistenzprüfungen (Constraints) definiert
@@ -124,6 +134,17 @@ Nachdem das Datenmodell erstellt ist, muss es mit Leben (Daten) gefüllt werden:
 
 ### Wie kriege ich Daten in die Datenbank?
 
+- Wenn wir das Datenmodell erschaffen haben, müssen wir die Tabellen mit Leben füllen. Nachfolgend sind Bespiele mit folgenden Befehlen:
+  - INSERT INTO
+    - Tabelle muss existieren
+  - COPY (transferiert Daten in eine Tabelle oder exportiert diese in eine Datei, z. B. *.csv)
+    - Tabelle muss existieren
+  - CREATE TABLE AS SELECT
+    - Tabelle wird erstellt
+  - SELECT * INTO ... FROM
+    - Tabelle wird erstellt   
+
+  
 ```sql
 --alle Spalten gegeben
 INSERT INTO tabelle VALUES (1, 'Wert 1', 'Wert 2');
@@ -138,12 +159,19 @@ INSERT INTO tabelle VALUES
 ```
 
 ```sql
---Tabelle muss bereits bestehen
-COPY
+-- Daten in Tabelle einfügen
+COPY table_name (column1, column2, ...)
+FROM '/path/to/file.csv'
+WITH (FORMAT csv, HEADER true);
+
+-- Daten aus Tabelle exportieren
+COPY table_name (column1, column2, ...)
+TO '/path/to/output.csv'
+WITH (FORMAT csv, HEADER true);
 ```
 
 ```sql
--- Neue Tabellen aus bestenden Tabellen erzeugen
+-- Neue Tabellen aus bestehenden Tabellen erzeugen
 CREATE TABLE AS SELECT * FROM tabelle
 
 SELECT * INTO [table_name] FROM ...
@@ -153,13 +181,26 @@ SELECT * INTO [table_name] FROM ...
 psql  
 
 IDE, z. B. python (import pyodbc, import psycopg)
+ 
+### Daten aktualisieren
 
 ```sql
-UPDATE tabelle SET spalte = 'Wert' WHERE spalte = 'Wert'
+UPDATE tabelle SET spalte = 'neuer Wert' WHERE spalte = 'alter Wert'
+
+-- Hier ein komplizierteres UPDATE statement, das Zellen basierend auf einem anderen Spaltenwert updated:
+UPDATE employees
+SET salary = su.new_salary
+FROM salary_updates su
+WHERE employees.id = su.id;
 ```
+
+### Daten löschen
 
 ```sql
 DELETE FROM tabelle WHERE spalte = 'Wert'
+
+-- Was macht folgender Befehl? :-D
+DELETE FROM employees;
 ```
 ## Aufgabe 2
 
@@ -182,32 +223,26 @@ Erstellen Sie über pgAdmin und seinem ERD-Tool ein Datenmodell, das eine Anwend
 
 + Provozieren Sie nun für jeden INSERT INTO Befehl eine Verletzung der Integritätsbedingungen. Wie sind die Fehlermeldungen?
 
-### Datenabfrage (SELECT)
+## Datenabfrage (SELECT)
 
-+ SELECT ist ein sehr mächtiger Befehl, um Daten aus Tabellen abzufragen
-+ Wenn die Daten bereits definiert sind (DDL), bewegt man sich fast ausschließlich mit diesem Befehl, um Daten zu analysieren und auszuwerten
++ `SELECT` ist ein sehr mächtiger Befehl, um Daten aus Tabellen abzufragen
++ Wenn die Daten bereits definiert (DDL) und befüllt (DML) sind, bewegt man sich fast ausschließlich mit diesem Befehl, um Daten zu analysieren und auszuwerten
 + Daten können sehr effizient zusammengefügt und verbunden werden. 
   + Die Analyse von Daten wird im Vergleich zu z. B. Excel wesentlich flexibler und einfacher
-
-```sql
--- Ich bin ein Kommentar
-SELECT * FROM products;
-```
-+ :arrow_up: Zur Einführung ein Code-Beispiel, wie wir es auf den nächsten Seiten öfter sehen werden
 
 + :arrow_down: Ein wichtiger Einstieg in SQL ist die Selektion von Spalten und Zeilen, fangen wir mit den Spalten an: 
 
 ```sql
 -- Wie selektiere ich Spalten?
-SELECT product_name, quantity_per_unit FROM products; --product_name = Spalte
+SELECT product_name, quantity_per_unit FROM products; --product_name & quantity_per_unit = Spaltennamen
 
-SELECT * FROM products --alle Spalten
+SELECT * FROM products; --alle Spalten
 ```
 ### Operatoren
 
-+ Wie selektiere (filtere) ich Zeilen? :arrow_down::
++ Wie selektiere (filtere) ich Zeilen?:
 
-+ mit dem WHERE statement:
++ mit dem WHERE statement :arrow_down::
 
 ```sql
 SELECT * FROM products
@@ -224,20 +259,21 @@ Operator | Bedeutung
 \>= | größer gleich
 <> oder != | ungleich
 
+```sql
+-- Alle Produkte größer gleich $50
+SELECT * FROM products
+WHERE unit_price >= 50
+```
+
 #### Null-Werte
+
++ :information_source: Null-Werte stehen für unbekannte Werte 
 
 Operator | Bedeutung
 ---------|----------
 is Null | Null-Werte 
 is not Null | nicht Null-Werte
 
-+ :information_source: Null-Werte stehen für unbekannte Werte 
-
-```sql
--- Alle Produkte größer gleich $50
-SELECT * FROM products
-WHERE unit_price >= 50
-```
 #### AND, NOT, OR
 
 Operator | Beschreibung
@@ -249,16 +285,14 @@ NOT | Negation
 ##### Beispiele
 ```sql
 -- Alle Produkte, die mit "A" anfangen UND über 50 $ kosten
-SELECT * FROM products WHERE product_name LIKE 'A%' and unit_price > 50
--- Alle Produkte, die **nicht** mit "B" anfangen 
-SELECT * FROM products WHERE product_name NOT LIKE ('B%')  
+SELECT * FROM products WHERE product_name LIKE 'A%' and unit_price > 50 
 ```
 
 ```sql
--- Welche Produkte kosten über $50?
+-- Welche Produkte kosten über zwischen $ 50-100?
 SELECT product_id, product_name
 FROM products
-WHERE unit_price >= 50;
+WHERE unit_price >= 50 and unit_price <= 100;
 ```
 + Eine Besonderheit im `WHERE` Keyword ist das Filtern mit `LIKE`:
 
@@ -270,12 +304,15 @@ WHERE productname LIKE 'A%'
 WHERE productname LIKE '%a%'
 -- 3) Mit "A" endet
 WHERE productname LIKE '%a'
+
+-- Alle Produkte, die **nicht** mit "B" anfangen 
+SELECT * FROM products WHERE product_name NOT LIKE ('B%') 
 ```
 
 ### Aggregate Functions
 
 + Aggregatfunktionen sind Funktionen, die über alle oder bestimmte Spalten aggregieren 
-+ :arrow_up: Beispiele siehe `GROUP BY` oben
++ :arrow_donw: Beispiele siehe `GROUP BY` oben
 
 ```sql
 -- Was ist das teuerste Produkt? (Aggregation auf gesamte Tabelle)
@@ -290,7 +327,7 @@ FROM products
 GROUP BY supplier_id
 ORDER BY avg
 ```
-+ :arrow_up: :exclamation: Jede Spalte, die im `SELECT ` Keyword auftaucht (außer der Aggregationsfunktion selbst), muss auch im `GROUP BY` Keyword vorkommen
++ :arrow_up: :exclamation: Jede Spalte, die im `SELECT` Keyword auftaucht (außer der Aggregationsfunktion selbst), muss auch im `GROUP BY` Keyword vorkommen
 
 ```sql
 -- Geht das bitte mit aufgelöstem Händlername?
@@ -300,6 +337,8 @@ LEFT JOIN
 FROM products
 GROUP BY supplier_id
 ORDER BY avg) ave_price ON suppliers.supplier_id=ave_price.supplier_id
+
+HIER FEHLT GANZ NORMALER JOIN 
 ```
 ![Resultat](abb3.png)
 
@@ -337,6 +376,8 @@ customer_id | product_id | Kaufdatum
 
 + :arrow_up: Um Daten wieder lesbar zu machen, müssen Sie über einen JOIN wieder verknüpft werden, d. h. die Schlüssel (hier Fremdschlüssel) der Primärtabelle angehängt werden
 
+Abbildung denormalisiert
+
 ```sql
 --Welche Firma (customer) hat welche Produkte gekauft? 
 SELECT company_name, product_name FROM order_details
@@ -348,7 +389,7 @@ WHERE order_details.order_id=10248
 
 + JOINS können INNER, OUTER oder CROSS sein
 
-![JOINS](/home/anush/data/docker/northwind/joins.png)
+![JOINS](joins.png)
 [Source: https://www.linkedin.com/pulse/sql-inner-join-tutorial-matt-l](https://www.linkedin.com/pulse/sql-inner-join-tutorial-matt-l)
 
 ## SET Operatoren
@@ -386,10 +427,11 @@ Ein kleines Beispiel. Gegeben ist das ERM-Schema der Northwind-Datenbank:
 
 ![Quelle: https://github.com/yugabyte/yugabyte-db/wiki/Northwind-Sample-Database](erm_northwind.png)
 
-Die Firma will einen Bonus für jeden Mitarbeiter (Tabelle employees) einen Bonus ausschütten und zwar abhängig von der Summe der verkauften Produkte (sum(unit_price) in Tabelle order_details) 
+Die Firma will für jeden Mitarbeiter (Tabelle employees) einen Bonus ausschütten und zwar abhängig von der Summe der verkauften Produkte (sum(unit_price) in Tabelle order_details) 
 
 > Was müssen wir dafür tun? :thinking:
 
+<<<<<<< HEAD
 Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen, sollte auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer 
 + a) Unterabfrage, einer 
 + b) Common Table Expression (CTE) und einer 
@@ -398,6 +440,13 @@ Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität
 ```sql
 
 -- a) mit einer Unterabfrage
+=======
+Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen,kann (muss aber nicht) auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer a) Unterabfrage (subquery), einer b) Common Table Expression (CTE) und einer c) temporären Tabelle:
+
+```sql
+
+-- mit einer Unterabfrage (subquery)
+>>>>>>> 6764e9b49ad09844c5972d82d6a516ed41fc122c
 
 SELECT first_name, last_name, SUM(unit_price)
 FROM 
@@ -449,14 +498,91 @@ DROP TABLE base_query;
 
 ```
 
+- Übrigens, wo können in SQL Unterabfragen stehen?
+  
+```sql
+-- Im SELECT statements
+
+-- Im SELECT keyworld selbst
+SELECT (SELECT 1) FROM ... --Hier darf nur in Skalarwert zurückkommen
+
+-- IM FROM keyword
+SELECT foo.* FROM
+(SELECT * FROM products) as foo -- Diese Subquery muss einen alias enthalten 
+
+-- Im WHERE keyword
+SELECT first_name, last_name FROM employees
+WHERE salary > (SELECT AVG(salary) from employees)
+
+-- Im HAVING keyword
+SELECT department, AVG(salary) FROM employees GROUP BY department 
+HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
+
+--nach dem IN keyword
+SELECT * FROM employess
+WHERE department_id IN (SELECT id FROM department WHERE name='Marketing' or name = 'Vertrieb') -- Hier darf nur eine Spalte in der Subquery zurückkommen  
+
+-- Subqueries dürfen auch in DDL und DML statements genutzt werden
+
+-- Wie schon bekannt beim Schreiben einer neuen Tabelle:
+-- Hier: Schreibe eine neue Tabelle der "high earners"
+CREATE TABLE AS CREATE TABLE high_salary_employees AS 
+SELECT * FROM employees WHERE salary > (SELECT AVG(salary) FROM employees); 
+
+-- Subquery um eine neue Spalte CREATE TABLE high_salary_employees AS 
+ALTER TABLE employees ADD COLUMN avg_salary NUMERIC;
+UPDATE employees SET avg_salary = (SELECT AVG(salary) FROM employees);
+
+-- Subquery um Daten einzufügen
+-- Füge high earners in die high salary_employees ein
+INSERT INTO high_salary_employees (id, name, salary, department_id)
+SELECT id, name, salary, department_id FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);
+
+-- Im UPDATE statement
+-- Erhöhe das Gehalt jede(r) Mitarbeiter*in in der Verkaufsabteilung (Sales) um 10%
+UPDATE employees 
+SET salary = salary * 1.10 
+WHERE department_id IN (SELECT id FROM departments WHERE name = 'Sales');
+
+-- Im DELETE statement
+-- Lösche alle Mitarbeiter, die keiner Abteilung angehören
+DELETE FROM employees 
+WHERE department_id NOT IN (SELECT id FROM departments);
+```
 # DATA CONTROL LANGUAGE
 
-- Natürlich darf nicht jeder auf **alle** Daten zurückgreifen, diese müssen und können sehr feinteilig gegliedert werden:
+- Datenbankmanagementsysteme regeln Zugriffe über Benutzer und Rollen
+  - :thinking: Warum gibt es diese Unterscheidung überhaupt?
+  - Rollen und Benutzer werden global (auf dem Datenbankcluster angelegt) und somit nicht auf Datenbankebene
+  - Rollen und Benutzer können aber Datenbankobjekte besitzen
+    - Aus diesem Grund ist es nicht unbedingt einfach Rollen zu löschen, dies kann erst mit Umschreibung der Besitzverhältnisse geschehen
+  - Rollen können Rechte vererben
 
 ```sql
-GRANT 
+-- Rolle anlegen, die sich auf dem Datenbankcluster authentifizieren (LOGIN) kann
+CREATE ROLE rolename WITH LOGIN PASSWORD '******';;
+-- Nutzer zu Rolle hinzufügen
+GRANT rolename TO myuser;
+-- Rolle löschen
+DROP ROLE name;
 
-REVOKE 
+```
+- Natürlich darf nicht jeder auf **alle** Daten zurückgreifen, diese müssen und können sehr feinteilig gegliedert werden:
+
+[PostgreSQL Privileges](https://www.postgresql.org/docs/current/ddl-priv.html)
+
+```sql
+-- Das CREATE ROLE Beispiel oben erlaubt das Verbinden auf alle Datenbanken innerhalb des Clusters
+-- Um diese Rechte einzuschränken, z. B. nur das Verbinden auf EINE Datenbank zu erlauben, müssen Rechte auf Datenbankebene entzogen werden
+
+REVOKE CONNECT ON DATABASE postgres FROM rolename;
+
+-- ... und im Anschluss wiederum für die Datebank gesetzt werden
+
+GRANT CONNECT ON DATABASE mydb TO rolename;
+GRANT USAGE ON SCHEMA public TO rolename;
+GRANT SELECT, INSERT, UPDATE, DELETE ON tablename TO rolename;
+
 ```
 
 # Aufgabe 3
