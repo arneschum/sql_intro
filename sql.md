@@ -431,7 +431,6 @@ Die Firma will für jeden Mitarbeiter (Tabelle employees) einen Bonus ausschütt
 
 > Was müssen wir dafür tun? :thinking:
 
-<<<<<<< HEAD
 Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen, sollte auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer 
 + a) Unterabfrage, einer 
 + b) Common Table Expression (CTE) und einer 
@@ -440,13 +439,6 @@ Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität
 ```sql
 
 -- a) mit einer Unterabfrage
-=======
-Dies kann tatsächich auf vielen Wegen gelöst werden. Aufgrund der Komplexität der JOINs zwischen 3 Tabellen,kann (muss aber nicht) auch auf Hilfswerkzeuge, d. h. Zwischenergebnisse, zurückgegriffen werden. Folgend, das konkrete Beispiel mit einer a) Unterabfrage (subquery), einer b) Common Table Expression (CTE) und einer c) temporären Tabelle:
-
-```sql
-
--- mit einer Unterabfrage (subquery)
->>>>>>> 6764e9b49ad09844c5972d82d6a516ed41fc122c
 
 SELECT first_name, last_name, SUM(unit_price)
 FROM 
@@ -464,6 +456,8 @@ Unterabfragen dürfen in folgenden Keywords und Statements verwendet werden:
   - HAVING
   - ORDER BY
   - INSERT, UPDATE, DELETE statements
+
+Dazu gleich mehr Beispiele :arrow_down:
 
 ```sql
 -- b) mit einer CTE (Common Table Expression)
