@@ -587,4 +587,10 @@ SQL-Abfragen
 2. Tabelle territories: Aggregieren Sie die Anzahl der Einträge auf die erste Stelle der territory_id
    - Ziehen Sie hierfür mit der LEFT-Funktion die erste Stelle aus der territory_id und zählen Sie diese im Anschluss. Ordnen Sie das Ergebnis absteigend nach der Anzahl
    - Beachten Sie, dass die LEFT-Funktion auch in der Aggregation und in der Ordnung angegeben muss
-3. 
+3. ..
+4. ..
+5. ..
+6. ..
+7. Der Lieferant 'Exotic Liquids' möchte eine Werbe-Aktion für sein Getränkesortiment machen. Erstelle für ihn eine Liste der Kunden, die schon Getränke seiner Firma mit einem Mindestumsatz von 1000 bestellt haben.
+   - Dies erfordert einen sechsfachen JOIN von categories auf customers und die Berechnung des Mindesumsatzes, also quantity * unit_price
+   - Welche   
