@@ -582,3 +582,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON tablename TO rolename;
 # Aufgabe 3
 
 SQL-Abfragen
+
+1. Zählen sie aus der Tabelle orders die Anzahl der Bestellung aus jeder Stadt und ordnen Sie das Ergebnis absteigend nach der Anzahl, aus welcher Stadt kommen die meisten Bestellungen?
+2. Tabelle territories: Aggregieren Sie die Anzahl der Einträge auf die erste Stelle der territory_id
+   - Ziehen Sie hierfür mit der LEFT-Funktion die erste Stelle aus der territory_id und zählen Sie diese im Anschluss. Ordnen Sie das Ergebnis absteigend nach der Anzahl
+   - Beachten Sie, dass die LEFT-Funktion auch in der Aggregation und in der Ordnung angegeben muss
+3. 
