@@ -589,8 +589,9 @@ SQL-Abfragen
    - Beachten Sie, dass die LEFT-Funktion auch in der Aggregation und in der Ordnung angegeben muss
 3. ..
 4. ..
-5. ..
+5. Was war der Umsatz (unit_price * quantity - Rabatt) im Jahr 1997 für die Kategorien Fleisch/Geflügel (Meat/Poultry) und Meeresfrüchte (Seafood)?
+   - Dies beinhaltet einen 4-fachen JOIN der Tabellen orders, order_details, products, categories sowie eine Aggregation auf category_name und der Extraktion des Jahres in der Zeitspalte 
 6. ..
 7. Der Lieferant 'Exotic Liquids' möchte eine Werbe-Aktion für sein Getränkesortiment machen. Erstelle für ihn eine Liste der Kunden, die schon Getränke seiner Firma mit einem Mindestumsatz von 1000 bestellt haben.
    - Dies erfordert einen sechsfachen JOIN von categories auf customers und die Berechnung des Mindesumsatzes, also quantity * unit_price
-   - Welche   
+   - Welche Firma hat den höchsten Bestellwert bei Getränken und wie hoch ist er?   
